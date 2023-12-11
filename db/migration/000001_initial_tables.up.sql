@@ -11,8 +11,8 @@ create table categories (
     id serial not null primary key,
     user_id int not null,
     title varchar not null,
-    type varchar unique not null,
-    description varchar unique not null,
+    type varchar not null,
+    description varchar not null,
     created_at timestamp not null default (now()),
     updated_at timestamp not null default (now())
 );

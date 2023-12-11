@@ -54,3 +54,48 @@ func TestGetCategoryById(t *testing.T) {
 	require.Equal(t, category1.Description, category2.Description)
 	require.NotEmpty(t, category2.CreatedAt)
 }
+
+func TestDeleteCategory(t *testing.T) {
+	category := createRandomCategory(t)
+	err := testQueries.DeleteCategory(context.Background(), category.ID)
+	require.NoError(t, err)
+}
+
+func TestUpdateCategory(t *testing.T) {
+	category1 := createRandomCategory(t)
+	arg := UpdateCategoryParams{
+		ID:          category1.ID,
+		Title:       util.RandomString(6),
+		Description: util.RandomString(20),
+	}
+
+	category2, err := testQueries.UpdateCategory(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, category2)
+	require.Equal(t, category1.ID, category2.ID)
+	require.NotEqual(t, category1.Title, category2.Title)
+	require.NotEqual(t, category1.Description, category2.Description)
+	require.NotEmpty(t, category2.CreatedAt)
+}
+
+func TestListCategory(t *testing.T) {
+	var lastCategory Category
+	for i := 0; i < 5; i++ {
+		lastCategory = createRandomCategory(t)
+	}
+
+	arg := GetCategoriesParams{
+		UserID:      lastCategory.UserID,
+		Type:        lastCategory.Type,
+		Title:       lastCategory.Title,
+		Description: lastCategory.Description,
+	}
+
+	categories, err := testQueries.GetCategories(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, categories)
+	require.GreaterOrEqual(t, len(categories), 1)
+	for _, category := range categories {
+		require.Equal(t, lastCategory.ID, category.ID)
+	}
+}
