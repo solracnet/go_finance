@@ -50,3 +50,6 @@ func TestGetUserById(t *testing.T) {
 	require.Equal(t, user1.Email, user2.Email)
 	require.NotEmpty(t, user2.CreatedAt)
 }
+
+// create delete user methods.
+// create other methods in user.sql too
