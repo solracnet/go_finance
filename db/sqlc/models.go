@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Accounts struct {
+type Account struct {
 	ID          int32     `json:"id"`
 	UserID      int32     `json:"user_id"`
 	CategoryID  int32     `json:"category_id"`
@@ -21,7 +21,7 @@ type Accounts struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-type Categories struct {
+type Category struct {
 	ID          int32     `json:"id"`
 	UserID      int32     `json:"user_id"`
 	Title       string    `json:"title"`
@@ -31,7 +31,7 @@ type Categories struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-type Users struct {
+type User struct {
 	ID        int32     `json:"id"`
 	Username  string    `json:"username"`
 	Password  string    `json:"password"`
