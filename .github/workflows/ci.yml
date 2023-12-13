@@ -16,7 +16,7 @@ jobs:
         image: postgres:14
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: 123456
           POSTGRES_DB: go_finance
         ports:
           - 5432:5432
