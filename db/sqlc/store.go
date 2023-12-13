@@ -13,7 +13,7 @@ type SqlStore struct {
 	*Queries
 }
 
-func NewStore(db *sql.DB) Store {
+func NewStore(db *sql.DB) *SqlStore {
 	return &SqlStore{
 		db:      db,
 		Queries: New(db),
