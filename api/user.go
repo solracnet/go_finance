@@ -14,7 +14,7 @@ type createUserRequest struct {
 	Email    string `json:"email" binding: "required"`
 }
 
-func (server *Server) createUser(ctx *gin.Context) {
+func (server *Server) CreateUser(ctx *gin.Context) {
 	var req createUserRequest
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
@@ -39,14 +39,14 @@ type getUserRequest struct {
 	Username string `uri:"username" binding: "required"`
 }
 
-func (server *Server) getUser(ctx *gin.Context) {
+func (server *Server) GetUser(ctx *gin.Context) {
 	var req getUserRequest
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
 
-	user, err := server.store.GetUser(ctx, req.Username)
+	user, err := server.store.GetUser(ctx, "%"+req.Username+"%")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, err)
@@ -62,7 +62,7 @@ type getUserByIdRequest struct {
 	ID int32 `uri:"id" binding: "required"`
 }
 
-func (server *Server) getUserById(ctx *gin.Context) {
+func (server *Server) GetUserById(ctx *gin.Context) {
 	var req getUserByIdRequest
 	err := ctx.ShouldBindUri(&req)
 	if err != nil {

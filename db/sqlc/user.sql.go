@@ -34,7 +34,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUser = `-- name: GetUser :one
-select id, username, password, email, created_at, updated_at from users where username = $1 limit 1
+select id, username, password, email, created_at, updated_at from users where username ilike $1 limit 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
