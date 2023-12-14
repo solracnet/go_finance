@@ -42,6 +42,7 @@ func TestCreateAccount(t *testing.T) {
 func TestGetAccount(t *testing.T) {
 	account1 := createRandomAccount(t)
 	account2, err := testQueries.GetAccountById(context.Background(), account1.ID)
+
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 	require.Equal(t, account1.UserID, account2.UserID)
