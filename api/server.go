@@ -29,6 +29,8 @@ func NewServer(store *db.SqlStore) *Server {
 	router.GET("/account", server.GetAccounts)
 	router.DELETE("/account/:id", server.DeleteAccount)
 	router.PUT("/account/:id", server.UpdateAccount)
+	router.GET("/account/graph/:user_id/:type", server.GetAccountGraph)
+	router.GET("/account-report", server.GetAccountReports)
 
 	server.router = router
 	return server
