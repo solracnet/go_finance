@@ -3,19 +3,22 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/solracnet/go_finance_backend/api"
 	db "github.com/solracnet/go_finance_backend/db/sqlc"
 )
 
-const (
-	dbDriver      = "postgres"
-	dbSource      = "postgresql://postgres:123456@localhost:5432/go_finance?sslmode=disable"
-	serverAddress = "0.0.0.0:8000"
-)
-
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	dbDriver := os.Getenv("DB_DRIVER")
+	dbSource := os.Getenv("DB_SOURCE")
+	serverAddress := os.Getenv("SERVER_ADDRESS")
 	conn, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
 		log.Fatal("Cannot open database connection")
