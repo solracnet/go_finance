@@ -23,6 +23,99 @@ left outer join users u on a.user_id = u.id
 where a.user_id = $1 and a.type = $2 and a.category_id = $3
 and a.title like $4 and a.description like $5 and a.date = $6;
 
+-- name: GetAccountsByUserIdAndType :many
+select
+    a.id,
+    a.user_id,
+    a.category_id,
+    a.title,
+    a.type,
+    a.description,
+    a.value,
+    a.date,
+    a.created_at,
+    a.updated_at,
+    c.title as category_title
+from accounts a
+left outer join categories c on a.category_id = c.id
+left outer join users u on a.user_id = u.id
+where a.user_id = $1 and a.type = $2;
+
+-- name: GetAccountsByUserIdAndTypeAndCategoryId :many
+select
+    a.id,
+    a.user_id,
+    a.category_id,
+    a.title,
+    a.type,
+    a.description,
+    a.value,
+    a.date,
+    a.created_at,
+    a.updated_at,
+    c.title as category_title
+from accounts a
+left outer join categories c on a.category_id = c.id
+left outer join users u on a.user_id = u.id
+where a.user_id = $1 and a.type = $2 and a.category_id = $3;
+
+-- name: GetAccountsByUserIdAndTypeAndCategoryIdAndTitle :many
+select
+    a.id,
+    a.user_id,
+    a.category_id,
+    a.title,
+    a.type,
+    a.description,
+    a.value,
+    a.date,
+    a.created_at,
+    a.updated_at,
+    c.title as category_title
+from accounts a
+left outer join categories c on a.category_id = c.id
+left outer join users u on a.user_id = u.id
+where a.user_id = $1 and a.type = $2 and a.category_id = $3
+and a.title like $4;
+
+-- name: GetAccountsByUserIdAndTypeAndCategoryIdAndTitleAndDescription :many
+select
+    a.id,
+    a.user_id,
+    a.category_id,
+    a.title,
+    a.type,
+    a.description,
+    a.value,
+    a.date,
+    a.created_at,
+    a.updated_at,
+    c.title as category_title
+from accounts a
+left outer join categories c on a.category_id = c.id
+left outer join users u on a.user_id = u.id
+where a.user_id = $1 and a.type = $2 and a.category_id = $3
+and a.title like $4 and a.description like $5;
+
+-- name: GetAccountsByUserIdAndTypeAndCategoryIdAndDescription :many
+select
+    a.id,
+    a.user_id,
+    a.category_id,
+    a.title,
+    a.type,
+    a.description,
+    a.value,
+    a.date,
+    a.created_at,
+    a.updated_at,
+    c.title as category_title
+from accounts a
+left outer join categories c on a.category_id = c.id
+left outer join users u on a.user_id = u.id
+where a.user_id = $1 and a.type = $2 and a.category_id = $3
+and a.description like $4;
+
 -- name: GetAccountsReports :one
 select sum(value) as sum_value from accounts where user_id = $1 and type = $2;
 

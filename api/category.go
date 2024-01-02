@@ -9,10 +9,10 @@ import (
 )
 
 type createCategoryRequest struct {
-	UserID      int32  `json:"user_id" binding: "required"`
-	Title       string `json:"title" binding: "required"`
-	Type        string `json:"type" binding: "required"`
-	Description string `json:"description" binding: "required"`
+	UserID      int32  `json:"user_id" binding:"required"`
+	Title       string `json:"title" binding:"required"`
+	Type        string `json:"type" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
 func (server *Server) CreateCategory(ctx *gin.Context) {
@@ -38,7 +38,7 @@ func (server *Server) CreateCategory(ctx *gin.Context) {
 }
 
 type getCategoryRequest struct {
-	ID int32 `uri:"id" binding: "required"`
+	ID int32 `uri:"id" binding:"required"`
 }
 
 func (server *Server) GetCategory(ctx *gin.Context) {
@@ -76,9 +76,9 @@ func (server *Server) DeleteCategory(ctx *gin.Context) {
 }
 
 type updateCategoryRequest struct {
-	ID          int32  `json:"id" binding: "required"`
-	Title       string `json:"title" binding: "required"`
-	Description string `json:"description" binding: "required"`
+	ID          int32  `json:"id" binding:"required"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
 func (server *Server) UpdateCategory(ctx *gin.Context) {
@@ -103,8 +103,8 @@ func (server *Server) UpdateCategory(ctx *gin.Context) {
 }
 
 type getCategoriesRequest struct {
-	UserID      int32  `json:"user_id" binding: "required"`
-	Type        string `json:"type" binding: "required"`
+	UserID      int32  `json:"user_id" binding:"required"`
+	Type        string `json:"type" binding:"required"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -115,22 +115,77 @@ func (server *Server) GetCategories(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
-
-	arg := db.GetCategoriesParams{
-		UserID:      req.UserID,
-		Type:        req.Type,
-		Title:       req.Title,
-		Description: req.Description,
-	}
-
-	category, err := server.store.GetCategories(ctx, arg)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, err)
+	var categories []db.Category
+	if len(req.Description) == 0 && len(req.Title) == 0 {
+		arg := db.GetCategoriesByUserIdAndTypeParams{
+			UserID: req.UserID,
+			Type:   req.Type,
 		}
-		ctx.JSON(http.StatusInternalServerError, err)
-		return
+		categoriesByUserIdAndType, err := server.store.GetCategoriesByUserIdAndType(ctx, arg)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, err)
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		categories = categoriesByUserIdAndType
 	}
 
-	ctx.JSON(http.StatusOK, category)
+	if len(req.Description) > 0 && len(req.Title) == 0 {
+		arg := db.GetCategoriesByUserIdAndTypeAndDescriptionParams{
+			UserID:      req.UserID,
+			Type:        req.Type,
+			Description: req.Description,
+		}
+		GetCategoriesByUserIdAndTypeAndDescription, err := server.store.GetCategoriesByUserIdAndTypeAndDescription(ctx, arg)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, err)
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		categories = GetCategoriesByUserIdAndTypeAndDescription
+	}
+
+	if len(req.Description) == 0 && len(req.Title) > 0 {
+		arg := db.GetCategoriesByUserIdAndTypeAndTitleParams{
+			UserID: req.UserID,
+			Type:   req.Type,
+			Title:  req.Title,
+		}
+		GetCategoriesByUserIdAndTypeAndTitle, err := server.store.GetCategoriesByUserIdAndTypeAndTitle(ctx, arg)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, err)
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		categories = GetCategoriesByUserIdAndTypeAndTitle
+	}
+
+	if len(req.Description) > 0 && len(req.Title) > 0 {
+		arg := db.GetCategoriesParams{
+			UserID:      req.UserID,
+			Type:        req.Type,
+			Title:       req.Title,
+			Description: req.Description,
+		}
+		categoryWithAllParams, err := server.store.GetCategories(ctx, arg)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, err)
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		categories = categoryWithAllParams
+	}
+	ctx.JSON(http.StatusOK, categories)
 }
