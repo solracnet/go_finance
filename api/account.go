@@ -137,17 +137,17 @@ func (server *Server) GetAccounts(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
 
 	args := db.GetAccountsParams{
 		UserID:      req.UserID,
 		Type:        req.Type,
-		CategoryID:  req.CategoryID,
+		CategoryID:  sql.NullInt32{Int32: req.CategoryID, Valid: req.CategoryID > 0},
 		Title:       req.Title,
 		Description: req.Description,
-		Date:        req.Date,
+		Date:        sql.NullTime{Time: req.Date, Valid: !req.Date.IsZero()},
 	}
-
 	accounts, err := server.store.GetAccounts(ctx, args)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))

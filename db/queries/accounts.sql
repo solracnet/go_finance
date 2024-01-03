@@ -23,8 +23,8 @@ left outer join users u on a.user_id = u.id
 where a.user_id = @user_id and a.type = @type
 and a.title ilike concat('%', @title::text, '%')
 and a.description ilike concat('%', @description::text, '%')
-and a.category_id = coalesce(@category_id, a.category_id)
-and a.date = coalesce(@date, a.date);
+and a.category_id = coalesce(sqlc.narg('category_id'), a.category_id)
+and a.date = coalesce(sqlc.narg('date'), a.date);
 
 -- name: GetAccountsReports :one
 select sum(value) as sum_value from accounts where user_id = $1 and type = $2;
