@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	db "github.com/solracnet/go_finance_backend/db/sqlc"
+	"github.com/solracnet/go_finance_backend/util"
 )
 
 type createCategoryRequest struct {
@@ -16,10 +17,12 @@ type createCategoryRequest struct {
 }
 
 func (server *Server) CreateCategory(ctx *gin.Context) {
+	util.GetAndVerifyToken(ctx)
 	var req createCategoryRequest
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
 
 	arg := db.CreateCategoryParams{
@@ -32,6 +35,7 @@ func (server *Server) CreateCategory(ctx *gin.Context) {
 	user, err := server.store.CreateCategory(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, user)
