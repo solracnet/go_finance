@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/solracnet/go_finance_backend/util"
 )
 
 type Claims struct {
@@ -50,7 +49,7 @@ func GetAndVerifyToken(ctx *gin.Context) error {
 		return errors.New("Authorization header format must be Bearer {token}")
 	}
 	tokenToValidate := fields[1]
-	err := util.ValidateToken(ctx, tokenToValidate)
+	err := ValidateToken(ctx, tokenToValidate)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, err)
 		return err

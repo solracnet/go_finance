@@ -17,9 +17,13 @@ type createCategoryRequest struct {
 }
 
 func (server *Server) CreateCategory(ctx *gin.Context) {
-	util.GetAndVerifyToken(ctx)
+	err := util.GetAndVerifyToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	var req createCategoryRequest
-	err := ctx.ShouldBindJSON(&req)
+	err = ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -46,8 +50,13 @@ type getCategoryRequest struct {
 }
 
 func (server *Server) GetCategory(ctx *gin.Context) {
+	err := util.GetAndVerifyToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	var req getCategoryRequest
-	err := ctx.ShouldBindUri(&req)
+	err = ctx.ShouldBindUri(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
@@ -65,8 +74,13 @@ func (server *Server) GetCategory(ctx *gin.Context) {
 }
 
 func (server *Server) DeleteCategory(ctx *gin.Context) {
+	err := util.GetAndVerifyToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	var req getCategoryRequest
-	err := ctx.ShouldBindUri(&req)
+	err = ctx.ShouldBindUri(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
@@ -86,10 +100,17 @@ type updateCategoryRequest struct {
 }
 
 func (server *Server) UpdateCategory(ctx *gin.Context) {
+	err := util.GetAndVerifyToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	var req updateCategoryRequest
-	err := ctx.ShouldBindJSON(&req)
+	err = ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
 
 	arg := db.UpdateCategoryParams{
@@ -101,6 +122,7 @@ func (server *Server) UpdateCategory(ctx *gin.Context) {
 	category, err := server.store.UpdateCategory(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, category)
@@ -114,8 +136,13 @@ type getCategoriesRequest struct {
 }
 
 func (server *Server) GetCategories(ctx *gin.Context) {
+	err := util.GetAndVerifyToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	var req getCategoriesRequest
-	err := ctx.ShouldBindJSON(&req)
+	err = ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return

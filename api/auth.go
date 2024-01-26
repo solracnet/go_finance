@@ -51,7 +51,7 @@ func (server *Server) Login(ctx *gin.Context) {
 		return
 	}
 
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(15 * time.Minute)
 	claims := &Claims{
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
